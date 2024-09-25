@@ -1,0 +1,6 @@
+.env
+node_modules/
+/sessions/*
+!/sessions/*.custom
+.wwebjs_cache
+package-lock.json
