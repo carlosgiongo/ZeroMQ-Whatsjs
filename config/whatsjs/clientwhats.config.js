@@ -1,7 +1,8 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const ZeroMq = require('../zeromq/zeromq.config');
 const qrcode = require('qrcode-terminal');
-const mountResponse = require('../../utils/mountResponse');
+const axios = require('axios');
+// const mountResponse = require('../../utils/mountResponse');
 
 /**
  * @param {ZeroMq} zeroMq 
@@ -64,11 +65,17 @@ function startWhatsJs(zeroMq){
 
             // ------- Actions call -------- //
 
-            if (message_parsed.content === '!!ping') {
-                // console.log(mountResponse(newMessage, 'Pong!'))
-                // zeroMq.sendMessage(JSON.stringify(mountResponse(newMessage, 'Pong!')));
-                // Make API CALL
+            try {
+                let actions = require('../webhooks/actions.json');
+                actions.forEach(action => {
+                    if (action.event === message_parsed.type && (action.content === message_parsed.content || action.content === '*')) {
+                        axios.post(action.webhook, message_parsed)
+                    }
+                });
+            } catch (error) {
+                console.log("No actions found...");
             }
+            
         }
     });    
 }

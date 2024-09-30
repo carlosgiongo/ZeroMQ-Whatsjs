@@ -2,5 +2,7 @@
 node_modules/
 /sessions/*
 !/sessions/*.custom
+/config/webhooks/*
+!/config/webhooks/*.custom
 .wwebjs_cache
 package-lock.json
