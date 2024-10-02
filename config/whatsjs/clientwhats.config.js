@@ -46,42 +46,32 @@ function startWhatsJs(zeroMq){
 
     //--------------------- Event listener to actions ---------------------//
 
-    zeroMq.on('message', (originalMessage) => { 
+    zeroMq.on('message', (originalMessage) => {
         let message_parsed = JSON.parse(originalMessage);
-
-        //-- Response to user
+    
+        // -- Response to user
         if (message_parsed.type === 'response' && message_parsed.response) {
             client.sendMessage(message_parsed.from, message_parsed.response);
         }
-        
-        //-- Actions
+    
+        // -- Actions
         if (message_parsed.type === 'message') {
-            // let newMessage = { 
-            //     type: 'message', 
-            //     from: message_parsed.from, 
-            //     content: message_parsed.content, 
-            //     response: null 
-            // };
-
-            // ------- Actions call -------- //
-
             try {
                 let actions = require('../webhooks/actions.json');
                 actions.forEach(action => {
                     if (action.event === message_parsed.type && (action.content === message_parsed.content || action.content === '*')) {
-                        try{
-                            axios.post(action.webhook, message_parsed)
+                        try {
+                            axios.post(action.webhook, message_parsed);
                         } catch (error) {
-                            console.log('Error on action: ', action);
+                            console.error('Error on action:', action, error); // Log the specific action and error
                         }
                     }
                 });
             } catch (error) {
-                console.log("No actions found...");
+                console.error("Error processing actions:", error); // Log the error related to actions
             }
-            
         }
-    });    
+    });
 }
 
 module.exports = startWhatsJs;
