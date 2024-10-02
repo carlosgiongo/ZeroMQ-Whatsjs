@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const defaultApiResponse = require("../../utils/defaultApiResponse");
 const ZeroMq = require("../../config/zeromq/zeromq.config");
 const fs = require('fs');
@@ -9,6 +11,8 @@ const path = require('path');
  */
 module.exports = function(app, zeroMq) {
     app.post('/webhooks/set', (req, res) => {
+        if(req.headers.authorization !== process.env.SECRET_KEY) return res.status(401).send(defaultApiResponse(401, 'Unauthorized', null));
+
         let { 
             title,
             webhook,

@@ -56,12 +56,12 @@ function startWhatsJs(zeroMq){
         
         //-- Actions
         if (message_parsed.type === 'message') {
-            let newMessage = { 
-                type: 'message', 
-                from: message_parsed.from, 
-                content: message_parsed.content, 
-                response: null 
-            };
+            // let newMessage = { 
+            //     type: 'message', 
+            //     from: message_parsed.from, 
+            //     content: message_parsed.content, 
+            //     response: null 
+            // };
 
             // ------- Actions call -------- //
 
@@ -69,7 +69,11 @@ function startWhatsJs(zeroMq){
                 let actions = require('../webhooks/actions.json');
                 actions.forEach(action => {
                     if (action.event === message_parsed.type && (action.content === message_parsed.content || action.content === '*')) {
-                        axios.post(action.webhook, message_parsed)
+                        try{
+                            axios.post(action.webhook, message_parsed)
+                        } catch (error) {
+                            console.log('Error on action: ', action);
+                        }
                     }
                 });
             } catch (error) {
