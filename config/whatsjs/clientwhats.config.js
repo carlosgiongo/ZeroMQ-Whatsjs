@@ -29,7 +29,7 @@ function startWhatsJs(zeroMq) {
     qrcode.generate(qr, { small: true });
   });
 
-  client.on("message_create", (message) => {
+  client.on("message", (message) => {
     let final_message = {
       type: "message",
       from: message.from,
