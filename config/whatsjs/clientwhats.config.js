@@ -1,12 +1,15 @@
+require('dotenv').config()
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const ZeroMq = require("../zeromq/zeromq.config");
 const qrcode = require("qrcode-terminal");
-const axios = require("axios");
+const fs = require("fs");
+const path = require("path");
+const audioToText = require("../../utils/audioToText");
 // const mountResponse = require('../../utils/mountResponse');
 
 /**
  * @param {ZeroMq} zeroMq
- */
+*/
 function startWhatsJs(zeroMq) {
   console.log("Starting WhatsJs...");
 
@@ -29,13 +32,22 @@ function startWhatsJs(zeroMq) {
     qrcode.generate(qr, { small: true });
   });
 
-  client.on("message", (message) => {
+  client.on("message_create", async (message) => {
+    let message_from = message.from;
+    let message_content = message.body;
+    
+    if(message.type == 'ptt' && process.env.GEMINI_API_KEY){ // Message is a voice note and need to be transcribed
+      let audio_media = await message.downloadMedia();
+      message_content = await audioToText(audio_media.data, audio_media.mimetype);  
+    }
+
     let final_message = {
       type: "message",
-      from: message.from,
-      content: message.body,
+      from: message_from,
+      content: message_content,
       response: null,
     };
+
     zeroMq.sendMessage(JSON.stringify(final_message));
   });
 

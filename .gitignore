@@ -4,5 +4,7 @@ node_modules/
 !/sessions/*.custom
 /config/webhooks/*
 !/config/webhooks/*.custom
+/config/whatsjs/media/*
+!/config/whatsjs/media/*.custom
 .wwebjs_cache
 package-lock.json
