@@ -32,7 +32,7 @@ function startWhatsJs(zeroMq) {
     qrcode.generate(qr, { small: true });
   });
 
-  client.on("message_create", async (message) => {
+  client.on("message", async (message) => {
     let message_from = message.from;
     let message_content = message.body;
     

@@ -18,10 +18,16 @@ module.exports = async function(binaryData, mimeType) {
     
     let text = "* Sorry, I couldn't transcribe the audio to text. Reply to the user who could not understand *";
     if (response.response.candidates) { 
-        text = ""
-        response.response.candidates[0].content.parts.forEach((content) => {
-            text += content.text + " ";
-        })
+        try{
+            text = ""
+            console.log("Info do auido:", response.response.candidates[0])
+            response.response.candidates[0].content.parts.forEach((content) => {
+                text += content.text + " ";
+            })
+        } catch (error) {
+            console.log("[ERROR ON AUDIO RECOGNITION]")
+            text = "* Sorry, I couldn't transcribe the audio to text. Reply to the user who could not understand *";
+        }        
     }
 
     return text;
